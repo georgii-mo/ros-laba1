@@ -14,20 +14,45 @@ ros::Subscriber subscriber;
 bool yee_boo(ros_lab1::ruletka::Request  &req,
          ros_lab1::ruletka::Response &res)
 {
-  srand(time(0)); 
-  if (time(0) % 2 == 0) 
-  {    
-    res.solution = std::string("win").c_str();
+  if ((req.colour == std::string("green").c_str()) and (req.number == 0)) 
+  {
+    srand(time(0)); 
+    if (time(0) % 2 == 0) 
+    {    
+      res.solution = std::string("win").c_str();
+    }
+    else
+    {
+      res.solution = std::string("lose").c_str();
+    }
+  }
+  else if ((req.colour != std::string("red").c_str()) and (req.colour != std::string("black").c_str())) 
+  {
+    ROS_INFO("Enter correct colour");
+    res.solution = std::string("error").c_str();
+  }
+  else if ((req.number < 1) or (req.number > 36))
+  {
+    ROS_INFO("Enter correct number");
+    res.solution = std::string("error").c_str();
   }
   else
   {
-    res.solution = std::string("lose").c_str();
+    srand(time(0));
+ 
+    if (time(0) % 2 == 0) 
+    {    
+      res.solution = std::string("win").c_str();
+    }
+    else
+    {
+      res.solution = std::string("lose").c_str();
+    }
+    ROS_INFO("Sending back response",res.solution);
+    std_msgs::String solution;
+    solution.data = res.solution;
+    publisher.publish(solution);
   }
-  
-  ROS_INFO("Sending back response",res.solution);
-  std_msgs::String solution;
-  solution.data = res.solution;
-  publisher.publish(solution);
   return true;
 }
 
